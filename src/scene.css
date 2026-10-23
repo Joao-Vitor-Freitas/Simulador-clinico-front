@@ -1,0 +1,120 @@
+.patient-scene {
+  position: relative;
+  overflow: hidden;
+  background: #d9e7ef;
+}
+.scene-room-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.scene-room-art image {
+  image-rendering: auto;
+  filter: saturate(.58) contrast(.95);
+}
+.scene-pose {
+  position: absolute;
+  left: 50%;
+  bottom: 27%;
+  width: 150px;
+  height: 230px;
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  background-position-x: 0%;
+  translate: -50% 0;
+  transform-origin: 50% 95%;
+  filter: saturate(.72) drop-shadow(2px 4px 2px #19365555);
+}
+.is-running.patient-scene-stable .scene-pose {
+  animation: patient-breathing 2.8s ease-in-out infinite;
+}
+.patient-scene-critical .scene-pose {
+  background-position-x: 100%;
+}
+.is-running.patient-scene-intense .scene-pose {
+  animation:
+    patient-breathing 2.2s ease-in-out infinite,
+    patient-intense-poses 5s steps(1, end) infinite;
+}
+.is-running.patient-scene-critical .scene-pose {
+  animation:
+    patient-breathing 1.3s ease-in-out infinite,
+    patient-critical-poses 4s steps(1, end) infinite;
+}
+.scene-plant {
+  position: absolute;
+  left: calc(50% + 185px);
+  bottom: 10%;
+  width: 45px;
+  height: 76px;
+  overflow: hidden;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+}
+.is-running .scene-plant { animation: none; }
+.scene-condition {
+  display: none;
+}
+@keyframes patient-breathing {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(3px) rotate(1deg);
+  }
+}
+@keyframes patient-intense-poses {
+  0%,
+  48%,
+  100% {
+    background-position-x: 50%;
+  }
+  49%,
+  62% {
+    background-position-x: 0%;
+  }
+}
+@keyframes patient-critical-poses {
+  0%,
+  58%,
+  100% {
+    background-position-x: 100%;
+  }
+  59%,
+  74% {
+    background-position-x: 50%;
+  }
+}
+@keyframes plant-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(1.4deg);
+  }
+}
+@media (max-width: 900px) {
+  .scene-pose {
+    bottom: 26%;
+    width: 128px;
+    height: 196px;
+  }
+  .scene-plant {
+    left: calc(50% + 112px);
+    bottom: 9%;
+    width: 29px;
+    height: 49px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-running.patient-scene-stable .scene-pose,
+  .is-running.patient-scene-intense .scene-pose,
+  .is-running.patient-scene-critical .scene-pose,
+  .is-running .scene-plant {
+    animation: none;
+  }
+}

@@ -1,0 +1,935 @@
+.immersion-page {
+  --ink: #193655;
+  --blue: #005bbf;
+  --rose: #ed145b;
+  --line: #ccdae6;
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  padding: clamp(16px, 2vw, 30px) clamp(16px, 3vw, 46px) 64px;
+  color: var(--ink);
+  background: #f5f7fa;
+}
+.immersion-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(14px, 3vw, 42px);
+  margin-bottom: 22px;
+  padding: 0 0 20px;
+  border-bottom: 2px solid var(--line);
+}
+.immersion-navigation {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+}
+.immersion-back {
+  flex: none;
+  color: var(--blue);
+  font-size: 1rem;
+  font-weight: 800;
+}
+.immersion-back span {
+  margin-right: 4px;
+  font-size: 1.35rem;
+}
+.immersion-clock > span {
+  display: block;
+  color: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+}
+.immersion-clock {
+  grid-column: 2;
+  justify-self: center;
+  min-width: 175px;
+  text-align: center;
+}
+.immersion-clock strong {
+  display: block;
+  margin: 2px 0 5px;
+  font-size: clamp(2rem, 3vw, 2.65rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.immersion-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #d3e0eb;
+}
+.immersion-progress i {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+  transition: width 0.3s linear;
+}
+.immersion-toolbar.is-urgent .immersion-clock > span,
+.immersion-toolbar.is-urgent .immersion-clock strong {
+  color: #b01847;
+}
+.immersion-toolbar.is-urgent .immersion-progress i {
+  background: #ed145b;
+}
+.immersion-end {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.immersion-end button,
+.immersion-end a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid var(--blue);
+  border-radius: 7px;
+  color: var(--blue);
+  background: #fff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.immersion-end .end-trigger span {
+  margin-right: 8px;
+  color: var(--rose);
+}
+.immersion-end .end-confirm {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: #fff;
+}
+.immersion-end .end-cancel {
+  border-color: var(--line);
+}
+.immersion-notice {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 1px solid #9ecbab;
+  border-radius: 8px;
+  color: #166343;
+  background: #ebf7ef;
+  font-size: 0.95rem;
+}
+.immersion-workspace {
+  display: grid;
+  grid-template-columns: minmax(230px, 260px) minmax(0, 1fr) minmax(
+      230px,
+      260px
+    );
+  gap: clamp(14px, 1.6vw, 26px);
+  align-items: start;
+}
+.immersion-stage {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  height: min(680px, calc(100dvh - 185px));
+  min-height: 580px;
+  overflow: hidden;
+  border: 2px solid #536b80;
+  border-radius: 4px;
+  background: #d9e7ef;
+  box-shadow: none;
+}
+.immersion-stage > .patient-scene {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: calc(100% - 265px);
+}
+.immersion-stage-shade {
+  display: none;
+}
+.immersion-patient-status {
+  position: absolute;
+  z-index: 2;
+  top: 13px;
+  left: 16px;
+  display: grid;
+  gap: 2px;
+  max-width: calc(100% - 32px);
+  padding: 8px 11px;
+  border: 1px solid #afc8d8;
+  border-radius: 2px;
+  background: #fffffff2;
+}
+.immersion-patient-status span {
+  color: var(--blue);
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+.immersion-patient-status strong {
+  font-size: 0.9rem;
+}
+.immersion-readings,
+.immersion-review {
+  min-width: 0;
+  padding-top: 4px;
+}
+.immersion-readings {
+  grid-column: 1;
+  grid-row: 1;
+}
+.immersion-review {
+  grid-column: 3;
+  grid-row: 1;
+}
+.reading-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 11px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #b9cddd;
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+.reading-heading > span {
+  color: var(--ink);
+}
+.reading-heading small {
+  color: #526b80;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.reading-vitals,
+.reading-symptoms {
+  display: grid;
+  gap: 10px;
+}
+.reading-vital,
+.reading-symptom {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid #536b80;
+  border-radius: 3px;
+  background: #fff;
+}
+.reading-vital {
+  position: relative;
+  min-height: 105px;
+  padding-left: 14px;
+}
+.reading-vital.is-critical {
+  border-left-color: var(--rose);
+  background: #fff4f7;
+}
+.reading-vital-name {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+.reading-vital > strong {
+  display: block;
+  margin: 6px 0 10px;
+  font-size: 1.85rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+}
+.reading-vital > strong small {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.reading-vital-thermometer {
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 15px;
+  width: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe4eb;
+}
+.reading-vital-thermometer::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  width: 12px;
+  border-top: 1px solid #536a7c;
+}
+.reading-vital-thermometer span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 50%;
+  border-radius: inherit;
+  background: #1e9d67;
+  transition:
+    height 500ms ease,
+    background-color 300ms ease;
+}
+.reading-vital-thermometer.is-critical span {
+  height: 85%;
+  background: #d93b3b;
+}
+.reading-vital-status {
+  display: grid;
+  gap: 5px;
+}
+.reading-vital-status > span {
+  color: #187a54;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+.reading-vital.is-critical .reading-vital-status > span {
+  color: #b42337;
+}
+.reading-vital-status small {
+  color: #526b80;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+.reading-symptom {
+  --severity-color: #b16c16;
+  border-left-color: var(--severity-color);
+}
+.reading-symptom.severity-low { --severity-color: #3f8064; }
+.reading-symptom.severity-moderate { --severity-color: #b16c16; }
+.reading-symptom.severity-high { --severity-color: #b33c48; }
+.reading-symptom-title,
+.reading-symptom-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.reading-symptom-title {
+  align-items: baseline;
+}
+.reading-symptom-title strong {
+  font-size: 0.96rem;
+  line-height: 1.25;
+}
+.reading-symptom-title > span {
+  color: var(--severity-color);
+  font-size: 1.55rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.reading-symptom-title > span small {
+  font-size: 0.8rem;
+}
+.reading-symptom-meta {
+  margin: 4px 0 13px;
+  color: #526b80;
+  font-size: 0.83rem;
+}
+.reading-symptom-scale {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #dbe4eb;
+}
+.reading-symptom-caption {
+  display: block;
+  margin-top: 7px;
+  color: #526b80;
+  font-size: 0.72rem;
+}
+.immersion-context {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+}
+.reading-evolution,
+.reading-protocols {
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+}
+.reading-evolution {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-top: 3px solid #193655;
+  border-left: 1px solid var(--line);
+  background: #fff;
+}
+.immersion-context.has-change .reading-evolution {
+  border-top-color: #527669;
+  background: #fff;
+}
+.immersion-context.has-worse .reading-evolution {
+  border-top-color: #b33c48;
+}
+.reading-evolution-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+.reading-evolution-toggle > span:first-child {
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.reading-evolution-toggle strong,
+.reading-evolution-toggle small {
+  grid-column: 1;
+}
+.reading-evolution-toggle strong {
+  font-size: 1rem;
+}
+.reading-evolution-toggle small {
+  color: #526b80;
+  font-size: .78rem;
+}
+.reading-evolution-chevron {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+.reading-evolution-details {
+  padding-top: 12px;
+  border-top: 1px solid #dbe4eb;
+}
+.reading-evolution-details p {
+  margin: 0;
+  color: #526b80;
+  font-size: .88rem;
+  line-height: 1.5;
+}
+.reading-change-list {
+  display: grid;
+  gap: 0;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.reading-change-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px;
+  border-top: 1px solid #e0e8ee;
+  border-radius: 0;
+  background: transparent;
+  color: #526b80;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+.reading-change-list li.change-worse,
+.reading-change-list li.change-critical { border-left: 4px solid #ba3558; color: #8e2945; }
+.reading-change-list li.change-better { border-left: 4px solid #16815d; color: #126447; }
+.reading-change-list li.change-changed { border-left: 4px solid var(--blue); }
+.reading-symptom.is-addressed { --severity-color: #3f8064; border-left: 3px solid var(--severity-color); background: #fff; }
+.reading-change-list li span:last-child {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.reading-change-list b {
+  color: #536b80;
+}
+.reading-evolution > span,
+.reading-evolution > p,
+.reading-empty {
+  margin: 0;
+  color: #526b80;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.reading-protocol {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+.reading-protocol:last-child {
+  border-bottom: 0;
+}
+.reading-protocol strong {
+  font-size: 0.92rem;
+}
+.reading-protocol p {
+  margin: 5px 0 0;
+  color: #526b80;
+  line-height: 1.5;
+}
+.immersion-chat {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  height: 285px;
+  overflow: hidden;
+  border-top: 1px solid #9fb4c4;
+  background: #f7f9fa;
+  color: var(--ink);
+  backdrop-filter: none;
+}
+.immersion-stage.is-chat-empty > .patient-scene {
+  height: calc(100% - 150px);
+}
+.immersion-stage.is-chat-empty .immersion-chat {
+  height: 150px;
+}
+.immersion-stage.is-chat-empty .immersion-messages {
+  display: none;
+}
+.atlas-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+}
+.chat-tool,
+.chat-drawer-heading button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: 1px solid #adc7d8;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+}
+.immersion-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 11px 15px;
+}
+.immersion-empty {
+  margin: 8px 0;
+  color: #526b80;
+  font-size: 0.92rem;
+}
+.immersion-exchange + .immersion-exchange {
+  margin-top: 12px;
+}
+.immersion-message {
+  position: relative;
+  width: fit-content;
+  max-width: 85%;
+  margin-bottom: 6px;
+  padding: 9px 11px;
+  border: 1px solid #c6d9e6;
+  border-radius: 3px;
+  background: #fff;
+}
+.immersion-message.student {
+  margin-left: auto;
+  background: #edf2f6;
+}
+.immersion-message small {
+  color: #526b80;
+  font-size: 0.69rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+}
+.immersion-message p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.immersion-message.patient {
+  padding-right: 39px;
+}
+.message-report {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 29px;
+  height: 29px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.message-report .atlas-icon {
+  width: 26px;
+  height: 26px;
+}
+.immersion-chat-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 13px;
+  border-top: 1px solid #c7dbe8;
+}
+.chat-time-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.chat-time-control label {
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.chat-time-control select {
+  min-height: 38px;
+  padding: 0 8px;
+  border: 1px solid #adc7d8;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+}
+.chat-time-control .chat-time-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.chat-time-custom input {
+  width: 56px;
+  min-height: 38px;
+  padding: 0 5px;
+  border: 1px solid #adc7d8;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+.chat-tool {
+  gap: 5px;
+  min-height: 38px;
+  padding: 0 9px;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+.chat-tool .atlas-icon {
+  width: 21px;
+  height: 21px;
+}
+.immersion-compose {
+  padding: 0 13px 10px;
+}
+.immersion-compose label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.immersion-compose > div {
+  display: flex;
+  gap: 7px;
+}
+.immersion-compose textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  max-height: 100px;
+  padding: 8px 10px;
+  resize: vertical;
+  border: 1px solid #abc6d8;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.88rem;
+}
+.immersion-compose button {
+  width: 46px;
+  border: 0;
+  border-radius: 3px;
+  background: #193655;
+  color: #fff;
+  font-size: 1.15rem;
+}
+.chat-drawer {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 15px;
+  font-size: 0.88rem;
+}
+.chat-drawer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.chat-drawer-heading button {
+  width: 30px;
+  height: 30px;
+  font-size: 1.1rem;
+}
+.chat-drawer p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.chat-drawer label {
+  display: block;
+  margin: 8px 0 4px;
+}
+.chat-drawer select,
+.chat-drawer textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #abc6d8;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+.chat-drawer textarea {
+  min-height: 60px;
+}
+.chat-drawer .button {
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 8px 12px;
+}
+.chat-protocol-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chat-protocol-controls select {
+  flex: 1;
+  min-width: 0;
+}
+.chat-protocol-reveal {
+  flex: none;
+  min-height: 39px;
+  padding: 7px 11px;
+  border: 1px solid var(--blue);
+  border-radius: 5px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.chat-protocol-content {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #c7dbe8;
+}
+.chat-protocol-note {
+  color: #385a70;
+  font-size: 0.8rem;
+}
+.chat-protocol-content p {
+  padding: 7px 0;
+  border-bottom: 1px solid #dce9ef;
+}
+.chat-protocol-content b {
+  color: #143650;
+}
+.chat-protocol-source {
+  margin-top: 12px !important;
+  font-size: 0.8rem;
+}
+.chat-protocol-source a {
+  color: #005bbf;
+  font-weight: 700;
+}
+.immersion-outcome {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: 12px;
+  width: min(410px, 100%);
+  max-width: calc(100% - 24px);
+  padding: clamp(18px, 4vw, 34px);
+  transform: translate(-50%, -50%);
+  border: 1px solid #a8c8df;
+  border-top: 4px solid #193655;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 14px 40px #14365055;
+  backdrop-filter: none;
+  color: #193655;
+}
+.immersion-outcome strong { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.13; }
+.immersion-outcome p { margin: 0; color: #526b80; line-height: 1.5; }
+.immersion-outcome .button { justify-self: start; }
+.vital-meter { display: grid; gap: 5px; }
+.vital-meter-track { height: 8px; overflow: hidden; border-radius: 2px; background: #dae8f0; }
+.vital-meter-track span { display: block; height: 100%; border-radius: inherit; background: #527669; transition: width .8s ease, background-color .4s ease; }
+.vital-meter.is-warning .vital-meter-track span { background: #e6a332; }
+.vital-meter.is-critical .vital-meter-track span { background: #d93b3b; }
+.vital-meter small { color: #47667c; font-size: .76rem; font-weight: 750; }
+@media (max-width: 1200px) {
+  .immersion-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .immersion-stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    height: 640px;
+  }
+  .immersion-readings {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .immersion-review {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .immersion-context {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .reading-vitals,
+  .reading-symptoms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  header.topbar {
+    height: 56px;
+    padding: 0 14px;
+  }
+  .topbar .user-email {
+    display: none;
+  }
+  .immersion-page {
+    padding: 12px 12px 40px;
+  }
+  .immersion-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 9px 0 11px;
+    background: #f5f7fa;
+  }
+  .immersion-navigation {
+    gap: 9px;
+  }
+  .immersion-clock {
+    min-width: 112px;
+  }
+  .immersion-clock > span {
+    font-size: 0.59rem;
+  }
+  .immersion-clock strong {
+    font-size: 1.85rem;
+  }
+  .immersion-end {
+    grid-column: 3;
+    justify-content: flex-end;
+  }
+  .immersion-end:has(.end-confirm) {
+    grid-column: 1 / -1;
+  }
+  .immersion-end button,
+  .immersion-end a {
+    min-height: 36px;
+    padding: 5px 6px;
+    font-size: 0.75rem;
+  }
+  .immersion-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .immersion-stage {
+    grid-column: 1;
+    height: 620px;
+    min-height: 0;
+  }
+  .immersion-stage > .patient-scene {
+    height: 335px;
+  }
+  .immersion-chat {
+    height: 285px;
+  }
+  .immersion-readings,
+  .immersion-review {
+    grid-column: 1;
+  }
+  .immersion-readings {
+    grid-row: 3;
+  }
+  .immersion-review {
+    grid-row: 4;
+  }
+  .immersion-context {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 0;
+  }
+}
+@media (max-width: 430px) {
+  .immersion-back {
+    font-size: 0.88rem;
+  }
+  .immersion-stage {
+    height: 565px;
+  }
+  .immersion-stage > .patient-scene {
+    height: 285px;
+  }
+  .immersion-chat {
+    height: 280px;
+  }
+  .immersion-patient-status {
+    top: 8px;
+    left: 8px;
+    padding: 6px 8px;
+  }
+  .immersion-patient-status span {
+    font-size: 0.6rem;
+  }
+  .immersion-patient-status strong {
+    font-size: 0.78rem;
+  }
+  .reading-vitals,
+  .reading-symptoms {
+    grid-template-columns: 1fr;
+  }
+  .immersion-chat-tools {
+    gap: 5px;
+    padding-inline: 8px;
+  }
+  .chat-protocol-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .chat-drawer {
+    padding: 8px 12px;
+  }
+  .chat-drawer-heading {
+    margin-bottom: 4px;
+  }
+  .chat-drawer label {
+    margin: 5px 0 3px;
+  }
+  .chat-protocol-content {
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .immersion-page *,
+  .immersion-page *::before,
+  .immersion-page *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,239 +1,69 @@
-# Simulador Clínico
+# Simulador Clínico — Next.js frontend
 
-Protótipo front-end de uma simulação clínica conversacional. O estudante digita uma conduta, o mock classifica a entrada como sucesso ou erro e atualiza a resposta do paciente, os sinais, os sintomas e a animação.
+A responsive clinical simulation interface for the FIAP Hospital Moinhos de Vento challenge. Students register, choose a case, interact with a virtual patient, inspect vital signs and protocols, and review the outcome. The Python API is the authority for time, clinical state, and Gemini evaluation.
 
-A versão atual contém o caso **Crise asmática aguda**, com o paciente simulado **Carlos Mendes**. O diagnóstico fica oculto durante a investigação e é revelado no feedback final.
+Source repository: [Simulador-Clinico-Front-End](https://github.com/DoteMe/Simulador-Clinico-Front-End). Team names and RM numbers are in [INTEGRANTES.TXT](INTEGRANTES.TXT).
 
-## Executando
+## Stack
 
-Não há build nem dependências externas. Abra `index.html` diretamente ou execute:
+Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS 4. The app uses functional components, props, hooks, and the custom `useSimulation` hook. Clinical data comes from the FastAPI backend. The mocked HTML/CSS/JavaScript prototype has been removed. Visual tokens and interaction patterns are documented in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+
+`app/` defines the Next.js routes and protected layout, `src/screens/` contains the four screens, `src/components/` shared UI, `src/hooks/` simulation polling, `src/auth.tsx` authentication context, `src/api.ts` the HTTP client, and `src/types.ts` the API contracts. `src/styles.css` combines Tailwind utilities with reusable clinical UI patterns.
+The simulation room uses the supplied hospital pixel-art atlas and a transparent three-pose patient derivative in `src/components/PatientScene.tsx`, styled by `src/scene.css`. The backend still supplies every clinical measurement and outcome.
+
+## Setup and run
+
+Requirements: Node.js 20.9+ (Node 22 or 24 recommended), npm, and the Python backend.
 
 ```bash
-python3 -m http.server 8000
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-Depois acesse `http://localhost:8000`.
+Start the backend separately from `../backend` using its [README](../backend/README.md). Open `http://127.0.0.1:3000`. The frontend `.env.local` contains only `NEXT_PUBLIC_API_BASE_URL`; keep the Gemini key and database URL in `backend/.env` or the backend server environment. Never put secrets in a `NEXT_PUBLIC_` variable.
 
-## Estrutura
-
-- `index.html`: estrutura semântica da tela e fallbacks visuais.
-- `js/caso-mock.js`: configuração do caso, cenário, objetos, personagem, poses, ajuda e regras de sucesso/erro.
-- `js/simulacao.js`: motor que monta o cenário e executa o mock.
-- `css/style.css`: layout, componentes e responsividade; não contém recortes específicos dos assets.
-- `assets/pixel-hospital/`: folhas de sprites.
-- `assets/THIRD_PARTY_NOTICES.md`: origem e situação de licença dos assets.
-
-## Mock atual
-
-### Caso clínico: crise asmática aguda
-
-A doença deste mock é uma **exacerbação aguda de asma**, conhecida de forma mais simples como **crise asmática**. Durante a crise, os brônquios ficam inflamados e estreitos, dificultando principalmente a saída do ar. Isso explica o chiado, o aperto no peito, a tosse, a respiração acelerada e a queda da saturação.
-
-O diagnóstico fica oculto durante a simulação. O estudante recebe a queixa, observa os sinais vitais, pode investigar achados adicionais e vê o nome da doença no feedback final.
-
-#### Paciente e sintomas
-
-- **Paciente:** Carlos Mendes, consciente e recém-chegado.
-- **Queixa principal:** falta de ar e chiado iniciados há aproximadamente 30 minutos.
-- **Sintomas visíveis:** falta de ar, chiado, tosse seca, aperto no peito e dificuldade para falar frases longas.
-- **Achado oculto:** sibilos difusos, revelados ao perguntar sobre o chiado ou a ausculta.
-- **Gatilho oculto:** contato recente com muita poeira.
-- **Antecedente oculto:** asma desde a infância e falta da medicação de resgate.
-
-#### Evolução mockada
-
-| Estado  | PA          | FC      | FR      | SpO₂ | Interpretação                                                |
-| ------- | ----------- | ------- | ------- | ---- | ------------------------------------------------------------ |
-| Inicial | 138/86 mmHg | 108 bpm | 26 irpm | 92%  | Broncoespasmo, taquicardia e hipóxia leve.                   |
-| Piora 1 | 144/90 mmHg | 116 bpm | 30 irpm | 90%  | Maior esforço respiratório e dificuldade para falar.         |
-| Piora 2 | 136/84 mmHg | 124 bpm | 34 irpm | 87%  | Hipoxemia e fluxo de ar bastante reduzido.                   |
-| Crítico | 90/58 mmHg  | 132 bpm | 38 irpm | 82%  | Exaustão respiratória e risco de insuficiência respiratória. |
-
-O tempo e as condutas incorretas fazem o caso avançar. Ao chegar ao estado crítico, o personagem fica de costas e a simulação termina.
-
-#### Três medidas necessárias para o sucesso
-
-O sucesso não depende mais de uma única frase. O estudante precisa registrar três medidas diferentes, em qualquer ordem:
-
-1. **Oxigênio suplementar** — reconhecido por `oxigênio`, `O2` ou `máscara de oxigênio`.
-2. **Salbutamol inalatório** — reconhecido por `salbutamol`, `broncodilatador` ou `nebulização`.
-3. **Corticoide sistêmico** — reconhecido por `corticoide`, `corticosteroide`, `prednisona` ou `prednisolona`.
-
-Cada medida correta aparece no HUD como `1/3`, `2/3` ou `3/3` e atualiza imediatamente sintomas, gravidade e sinais vitais. As barras verticais acompanham essas mudanças com animação. Repetir a mesma medida não aumenta a contagem. O caso só termina com sucesso quando as três forem concluídas; então o personagem apresenta a pose de joinha.
-
-O placeholder do campo contém o roteiro curto `oxigênio → salbutamol → corticoide` para facilitar a demonstração.
-
-#### Outras interações
-
-- Perguntas sobre chiado, gatilhos ou histórico revelam achados sem penalidade.
-- Uma frase que não corresponda a investigação nem a uma das três medidas agrava o paciente.
-- O botão `Avançar +1 min` reduz o tempo do caso em um minuto e aplica a evolução clínica correspondente.
-- O feedback final mostra a doença, correlação clínica, autonomia, tempo, número de condutas, ajuda utilizada e pontos de aprendizado.
-
-#### Autonomia
-
-A autonomia começa em 100%. Cada conduta incorreta reduz 15 pontos. A maior ajuda clínica utilizada desconta 2, 5 ou 10 pontos, conforme o nível.
-
-> Este é um mock simplificado para demonstração de software. Ele não substitui protocolos institucionais nem orientação médica real.
-
-## Criando um caso mockado
-
-### 1. Duplique e identifique o caso
-
-Edite `js/caso-mock.js`:
-
-```js
-window.CASO_MOCK = {
-  id: "crise-asmatica",
-  duracaoMinutos: 7,
-  // ...
-};
+```bash
+npm run typecheck
+npm run build
+npm run start
 ```
 
-Use um `id` novo para separar conversa e cronômetro no `localStorage`.
+## Routes and flow
 
-### 2. Configure as medidas de sucesso e o erro
+At the end of a simulation, the result page opens an optional experience survey. Students can mark whether they liked it, rate clarity and difficulty from 1 to 5, and describe what helped or needs improvement. They can dismiss the prompt, reopen it, or edit a submitted response from the result page. One response is stored per completed attempt in the Python database; reloading does not ask again after submission. The backend README documents the authenticated endpoints and `feedback_summary.py` analysis command. These responses provide real usage feedback for CTWP Sprint 4, alongside the separate observed three-student usability study.
 
-Cada item de `etapas` representa uma medida obrigatória. Os IDs precisam ser únicos e a ordem digitada pelo estudante não importa.
+- `/entrar`: login or registration. Registration asks for a display name and a password of at least 8 characters. A fictional email in valid format is accepted; email ownership is not verified and there is no password recovery, so students must keep their chosen credentials. The header and dashboard show the name instead of the email.
+- `/`: private dashboard with available cases and the student's attempt history.
+- `/simulacoes/:id`: private simulation with visible symptoms, vital signs, live state refresh, Gemini interactions, protocol reveal, time advance, report, and finish.
+- `/simulacoes/:id/resultado`: private final clinical evolution, diagnosis, and feedback.
 
-```js
-avaliacao: {
-  sucesso: {
-    etapas: [
-      {
-        id: "oxigenio",
-        rotulo: "Oxigênio suplementar",
-        padroes: ["oxigenio", "o2"],
-        resposta: "Consigo respirar um pouco melhor.",
-      },
-      {
-        id: "salbutamol",
-        rotulo: "Salbutamol inalatório",
-        padroes: ["salbutamol", "broncodilatador"],
-        resposta: "O chiado começou a diminuir.",
-      },
-      {
-        id: "corticoide",
-        rotulo: "Corticoide sistêmico",
-        padroes: ["corticoide", "prednisona"],
-        resposta: "A equipe administrou o corticoide.",
-      },
-    ],
-    pose: "sucesso",
-    resumo: "As três medidas foram realizadas.",
-    acertos: "Descrição do que o estudante fez corretamente.",
-    melhoria: "Orientação para a próxima tentativa.",
-  },
-  erro: {
-    resposta: "O quadro piorou.",
-    feedback: "Conduta não reconhecida",
-    maxErros: 3,
-  },
-},
-```
+The backend base URL defaults to `http://127.0.0.1:8000/api`. Auth uses a bearer token in `sessionStorage`; the app verifies it with `/auth/me` on reload. The selected case duration and manual time advance interval are remembered in `localStorage`. New attempts offer 1, 3, 5 or 10 minutes, with 5 minutes as the default. The advance menu offers presets from 10 seconds to 10 minutes plus a custom value in seconds, limited by the case duration; defaults are 10 seconds for 1-minute cases, 30 seconds for 3- and 5-minute cases, and 1 minute for 10-minute cases. The app refreshes running simulations every 10 seconds while the tab is visible; the countdown advances locally between refreshes. Clinical values display at most one decimal place. The dashboard has History and Feedback tabs; Feedback shows the student's submitted experience surveys and lets them edit each response directly in the tab. The clock and result are always computed by the backend. The simulation route frames only the room and chat. Navigation, timer, vital signs, symptoms, and recent evolution sit in the surrounding site layout. Protocol selection and reveal are inside the chat drawer; consulted protocols are listed in the final feedback. On phones, the clinical panels follow the room and chat.
 
-O motor normaliza acentos, aceita qualquer padrão de cada etapa e impede que uma medida repetida aumente a contagem. Uma frase que não corresponda a uma investigação nem a uma etapa é tratada como erro.
+The message composer sends with Enter and inserts a line break with Shift+Enter. It consumes an authenticated SSE stream from FastAPI: provisional patient text appears as Gemini produces it, and the final validated response is saved before the UI treats it as complete. If Gemini is unavailable, the message stays in the field and an error appears beside it. Clock-only updates no longer invalidate an AI response while it is being generated; a competing interaction still asks the student to review the latest state. The static monitor waveform animation was removed.
 
-### 3. Configure o cenário
+The case cards name the presenting complaint. Introductory cases vary their second symptom per attempt, and some symptoms start hidden: students can ask about other complaints to discover them. A correctly addressed complaint is marked as addressed and cannot receive the same intervention again. The result opens automatically when all selected complaints have been addressed, with a successful educational outcome; the final zeroed symptoms and stabilized vital signs represent completion in the simulator, not instant recovery in a real patient. The evolution panel is near the top of the room and highlights worsening, improvement, and newly discovered complaints after each refresh or conduct.
 
-A geometria da sala e dos objetos é declarada em `visual`. Os móveis clínicos são componentes CSS estáveis, sem recortes de folhas de sprites:
+The protocol drawer labels its three levels as orientation, direction, and expected conduct. It links the clinical reference for the selected complaint to the NHS, the single portal used for built-in cases. The result also links the references for consulted protocols. A partial classification means only part of the expected conduct was covered. Exact full level-3 wording is accepted as correct by the API; paraphrases continue through Gemini evaluation. These short educational summaries are not clinical orders or a substitute for local medical review.
 
-```js
-visual: {
-  sala: { width: 600, height: 500 },
-  objetos: [
-    { nome: "maca-exame", top: 318, left: 28, width: 228, height: 104 },
-    { nome: "monitor", top: 150, right: 36, width: 118, height: 180 },
-  ],
-}
-```
+The dashboard presents case cards first, then the source list with seven NHS references. The links cover fever, headache, common cold, sore throat, dizziness, dehydration, and suspected heart attack. The protocol drawer and result retain their source links for consultation during and after the case.
 
-Para adicionar um objeto, inclua outro item no array. Para remover, apague apenas sua configuração.
+The dashboard, sources, feedback editor, and result view use the same restrained clinical style: white panels, thin dividers, navy actions, and status colour only when it carries meaning. The simulation room remains illustrated, but its surrounding controls and measurements follow the same style. Symptom severity uses restrained green, amber, and red bars. The evolution section sits directly below the patient simulation on desktop and mobile; it can be expanded, and its compact state names only changes visible at the displayed precision.
 
-### 4. Configure o personagem
+Questions and reassessment-only messages are shown as **Avaliação do quadro** in the result, rather than an incorrect conduct. They may uncover a hidden symptom but cannot complete a complaint. The student must provide a concrete intervention to finish the case.
 
-```js
-personagem: {
-  asset: "assets/pixel-hospital/patient.png",
-  top: 248,
-  left: "50%",
-  width: 192,
-  height: 192,
-  backgroundSize: "1152px 768px",
-  estados: [
-    { frames: ["0 0", "-192px 0"], velocidade: "1.2s" },
-    { frames: ["-768px 0", "-960px 0"], velocidade: "1s" },
-    { frames: ["-768px -384px", "-960px -384px"], velocidade: "0.85s" },
-    { frames: ["0 -576px", "-192px -576px"], velocidade: "0.75s" },
-  ],
-  poses: {
-    sucesso: { frames: ["0 -192px", "-192px -192px"], velocidade: "0.65s" },
-  },
-}
-```
+## Verification
 
-Cada estado informa dois quadros da folha e a velocidade da animação. A pose `sucesso` usa especificamente o par do personagem fazendo joinha e só é aplicada depois das três medidas corretas.
+Run `npm run typecheck` and `npm run build` for TypeScript and production compilation. The local browser-to-API check and screenshots are recorded in [docs/VALIDATION.md](docs/VALIDATION.md). The Sprint 4 implementation sequence is in [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md), and the team can record its required three-participant study in [docs/USABILITY_STUDY.md](docs/USABILITY_STUDY.md). Backend service unit tests run from `../backend` with `.venv/bin/python -m pytest -q tests`.
 
-O personagem é filho de `.pixel-room` e usa `left: "50%"`; por isso permanece centralizado na sala em celular, tablet e desktop. Para subir ou descer o conjunto sem quebrar a responsividade, altere apenas o deslocamento vertical de `.pixel-room`, nunca a posição isolada do personagem.
+## Deployment
 
-### 5. Atualize os dados clínicos
+Deploy the Next.js frontend on the same VPS as FastAPI or on Vercel. Set `NEXT_PUBLIC_API_BASE_URL` to the public HTTPS backend URL ending in `/api`, and set backend `ALLOWED_ORIGINS` to the exact frontend origin. A single VPS can keep the backend database in a persistent local SQLite file; Supabase is optional. See the backend README for its absolute `DATABASE_URL`, backups, migrations, and traffic limits. Verify the published streaming flow before sharing a public link.
 
-Em `js/simulacao.js`, altere `mensagemInicial` e `estadosClinicos`.
+The concrete free-tier checklist is in the [backend deployment guide](../backend/DEPLOY_ORACLE_VERCEL.md).
 
-Um sinal vital usa:
+No deployment URL or test account is included because none has been provisioned. Add the actual public frontend and backend URLs after deployment and verify the published browser flow. Students can create their own accounts using the registration screen; if a demonstration account is provisioned, document it for the evaluator without exposing a real password or key.
 
-```js
-spo2: ["91", "%", "baixa", 22];
-//      valor unidade nível  altura visual
-```
+## AI use
 
-Um sintoma usa:
-
-```js
-dispneia: ["8.0/10", 80, "Grave", "Fala entrecortada.", "alto"];
-```
-
-Mantenha as chaves correspondentes aos atributos `data-sinal-valor` e `data-sintoma` do HTML.
-
-### 6. Configure a ajuda
-
-Os itens de `ajudas` ficam no próprio `caso-mock.js`:
-
-```js
-{
-  titulo: "Conduta sugerida",
-  texto: "Administre o tratamento esperado pelo mock.",
-  impacto: "Ajuda utilizada · Impacto na autonomia: -10%.",
-}
-```
-
-O botão seguinte é gerado pelo título, portanto não fica vazio.
-
-### 7. Atualize o perfil visível
-
-Em `index.html`, altere nome, iniciais, contexto de chegada e queixa principal. Os valores iniciais de sinais e sintomas são fallbacks; o JavaScript aplica o primeiro estado ao carregar.
-
-### 8. Reinicie e teste
-
-Para limpar o caso atual:
-
-```js
-localStorage.removeItem("simuladorClinico.dor-toracica.registro.v2");
-localStorage.removeItem("simuladorClinico.dor-toracica.cronometro.v1");
-location.reload();
-```
-
-Checklist:
-
-- testar uma frase de sucesso;
-- testar qualquer frase de erro;
-- confirmar respostas e cores do resultado;
-- conferir pose inicial, giros progressivos, costas no desfecho negativo e joinha no sucesso;
-- conferir o feedback final nos três desfechos;
-- testar o botão `Avançar +1 min` e conferir a piora dos sinais;
-- percorrer todos os níveis da ajuda;
-- testar desktop, tablet e celular.
-
-## Assets
-
-O personagem usa o pacote `Assets Pixel Art - Hospital.zip`, fornecido pelo responsável do projeto. A sala e os móveis são desenhados pela interface para evitar recortes inconsistentes das folhas de sprites. O arquivo recebido não contém licença; confirme os direitos de redistribuição antes de publicar.
+The backend calls Gemini for patient responses and interaction evaluation through `google-genai`. The frontend sends the student's text and the selected visible symptom, then renders the stored response. The backend validates model output before changing clinical state. Development assistance was used to structure the application, API integration, and documentation; clinical outcomes remain governed by the backend rules. This is an educational simulation, not medical advice.
