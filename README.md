@@ -21,7 +21,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Start the backend separately from `../backend` using its [README](../backend/README.md). Open `http://127.0.0.1:3000`. The frontend `.env.local` contains only `NEXT_PUBLIC_API_BASE_URL`; keep the Gemini key and database URL in `backend/.env` or the backend server environment. Never put secrets in a `NEXT_PUBLIC_` variable.
+Start the backend separately from `../backend` using its [README](../backend/README.md). Open `http://127.0.0.1:3000`. The frontend `.env.local` contains `API_BASE_URL`; `next.config.ts` exposes this URL to browser code. Keep the Gemini key and database URL in `backend/.env` or the backend server environment. Never put secrets in `API_BASE_URL`.
 
 ```bash
 npm run typecheck
@@ -58,7 +58,7 @@ Run `npm run typecheck` and `npm run build` for TypeScript and production compil
 
 ## Deployment
 
-Deploy the Next.js frontend on the same VPS as FastAPI or on Vercel. Set `NEXT_PUBLIC_API_BASE_URL` to the public HTTPS backend URL ending in `/api`, and set backend `ALLOWED_ORIGINS` to the exact frontend origin. A single VPS can keep the backend database in a persistent local SQLite file; Supabase is optional. See the backend README for its absolute `DATABASE_URL`, backups, migrations, and traffic limits. Verify the published streaming flow before sharing a public link.
+Deploy the Next.js frontend on the same VPS as FastAPI or on Vercel. Set `API_BASE_URL` to the public HTTPS backend URL ending in `/api`, and set backend `ALLOWED_ORIGINS` to the exact frontend origin. The URL is embedded in the frontend build; redeploy after changing it. A single VPS can keep the backend database in a persistent local SQLite file; Supabase is optional. See the backend README for its absolute `DATABASE_URL`, backups, migrations, and traffic limits. Verify the published streaming flow before sharing a public link.
 
 The concrete free-tier checklist is in the [backend deployment guide](../backend/DEPLOY_ORACLE_VERCEL.md).
 
