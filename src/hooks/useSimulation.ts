@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { compareClinicalState, type ClinicalEvolution } from "../clinical";
+import type { VitalSample } from "../math";
 import type { Simulation } from "../types";
+import { acrescentarLeitura, carregarHistorico } from "../vitalHistory";
 export function useSimulation(id: string) {
   const [simulation, setSimulation] = useState<Simulation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [evolution, setEvolution] = useState<ClinicalEvolution | null>(null);
+  const [history, setHistory] = useState<VitalSample[]>([]);
+  const historyRef = useRef<VitalSample[]>([]);
   const generation = useRef(0);
   const latestRead = useRef(0);
   const actionInFlight = useRef(false);
@@ -19,6 +23,12 @@ export function useSimulation(id: string) {
     const change = compareClinicalState(latestState.current, state);
     if (change) setEvolution(change);
     latestState.current = state;
+    // Série temporal para a análise matemática (limite, derivada e integral).
+    const series = acrescentarLeitura(historyRef.current, state);
+    if (series !== historyRef.current) {
+      historyRef.current = series;
+      setHistory(series);
+    }
     clockAnchor.current = {
       seconds: state.remaining_seconds,
       at: performance.now(),
@@ -63,6 +73,8 @@ export function useSimulation(id: string) {
   useEffect(() => {
     latestState.current = null;
     clockAnchor.current = null;
+    historyRef.current = carregarHistorico(id);
+    setHistory(historyRef.current);
     setSimulation(null);
     setEvolution(null);
     setLoading(true);
@@ -138,6 +150,7 @@ export function useSimulation(id: string) {
     simulation,
     remainingSeconds,
     evolution,
+    history,
     loading,
     error,
     setError,

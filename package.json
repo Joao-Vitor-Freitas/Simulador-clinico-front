@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:matematica": "node --test tests/matematica.test.ts"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",

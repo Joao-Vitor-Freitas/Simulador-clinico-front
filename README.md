@@ -52,9 +52,27 @@ The dashboard, sources, feedback editor, and result view use the same restrained
 
 Questions and reassessment-only messages are shown as **Avaliação do quadro** in the result, rather than an incorrect conduct. They may uncover a hidden symptom but cannot complete a complaint. The student must provide a concrete intervention to finish the case.
 
+## Mathematical decision support (Sprint 4)
+
+The simulation page and the result page show a **decision support panel** built on three calculus tools applied to the patient's SpO₂ series (`src/math.ts`, `src/components/DecisionSupportPanel.tsx`):
+
+| Pillar | Tool | What it shows |
+| --- | --- | --- |
+| Trend | Limits | Current value against the 92% attention and 88% critical limits, `lim S(t)` as `t → t_k`, and minutes until 88% at the current rate when SpO₂ is falling |
+| Evolution | Derivative | Discrete rate `S′(t) ≈ [S(t₂) − S(t₁)] / (t₂ − t₁)` in %/min, with direction and magnitude |
+| Accumulation | Integral | Hypoxic deficit `∫ max(0, 90 − S(t)) dt` by the trapezoid rule, in %·min, shaded under the 90% line in the chart |
+
+A rule engine (`avaliarEstadoClinicoMVP`) combines the three into **Em Recuperação**, **Estável**, **Em Atenção** or **Piora Crítica**, with a recommendation. These are simulator rules for the MVP, not clinical orders. Heart rate and respiratory rate get their own rate of change and a heart-rate range alert (above 120 or below 50 bpm) but do not change the classification. Cases that do not monitor SpO₂ show those secondary rates and a notice instead of a classification.
+
+Evaluation order, which follows the table in the sprint guide: critical by value or derivative (S < 88% or S′ < −4 %/min); recovery (S ≥ 90% and S′ > +1.5 %/min); critical by accumulation (deficit > 15 %·min); attention (S < 92%, S′ < −2 %/min or deficit > 0); otherwise stable. Recovery is checked before the deficit rules because the deficit never decreases: otherwise a patient who recovered after a hypoxic episode could never be classified as recovering. For the same reason, a patient with any deficit above zero cannot return to **Estável**.
+
+The API only returns the current state, so the series is built in the browser: `useSimulation` appends a reading to `src/vitalHistory.ts` every time a server state is accepted (poll, conduct, time advance, finish), keyed by server elapsed time. The history is kept in `localStorage` under `vital-history:<simulation id>` so the result page and reloads keep the curve. Time the tab was closed is interpolated linearly. The "current" derivative is measured against the latest reading at least 15 seconds earlier to avoid inflated rates from near-simultaneous readings. Vital signs are matched by name and unit (`identificarSinal`); update that function if the backend renames them.
+
+`npm run test:matematica` runs 16 scenario tests (derivative, trapezoid integral, each classification, recovery after hypoxia, cases without SpO₂, series registration).
+
 ## Verification
 
-Run `npm run typecheck` and `npm run build` for TypeScript and production compilation. The local browser-to-API check and screenshots are recorded in [docs/VALIDATION.md](docs/VALIDATION.md). The Sprint 4 implementation sequence is in [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md), and the team can record its required three-participant study in [docs/USABILITY_STUDY.md](docs/USABILITY_STUDY.md). Backend service unit tests run from `../backend` with `.venv/bin/python -m pytest -q tests`.
+Run `npm run typecheck` and `npm run build` for TypeScript and production compilation, and `npm run test:matematica` for the Sprint 4 mathematics scenarios. The local browser-to-API check and screenshots are recorded in [docs/VALIDATION.md](docs/VALIDATION.md). The Sprint 4 implementation sequence is in [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md), and the team can record its required three-participant study in [docs/USABILITY_STUDY.md](docs/USABILITY_STUDY.md). Backend service unit tests run from `../backend` with `.venv/bin/python -m pytest -q tests`.
 
 ## Deployment
 

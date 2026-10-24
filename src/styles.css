@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./scene.css";
 @import "./immersion.css";
+@import "./decision.css";
 @theme {
   --color-navy: #193655;
   --color-royal: #005bbf;

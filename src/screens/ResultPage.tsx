@@ -3,12 +3,16 @@ import { Link, useParams } from "../navigation";
 import { api, type ExperienceFeedback } from "../api";
 import { clinicalNumber } from "../format";
 import { Empty, ErrorPanel, Loading } from "../components/Feedback";
+import { DecisionSupportPanel } from "../components/DecisionSupportPanel";
 import { VitalMeter } from "../components/VitalMeter";
+import type { VitalSample } from "../math";
 import type { Result, Simulation } from "../types";
+import { acrescentarLeitura, carregarHistorico } from "../vitalHistory";
 export function ResultPage() {
   const { id = "" } = useParams();
   const [simulation, setSimulation] = useState<Simulation | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [history, setHistory] = useState<VitalSample[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState<ExperienceFeedback | null>(null);
@@ -26,6 +30,8 @@ export function ResultPage() {
     try {
       const state = await api.simulation(id);
       setSimulation(state);
+      // Série de leituras guardada durante o atendimento, fechada com a leitura final.
+      setHistory(acrescentarLeitura(carregarHistorico(id), state));
       if (state.result) {
         setResult(await api.result(id));
         try {
@@ -255,6 +261,7 @@ export function ResultPage() {
             )}
           </article>
         </div>
+        <DecisionSupportPanel history={history} timeLimitMinutes={simulation.time_limit_minutes} variant="result" />
         <article className="result-card result-history">
           <span className="eyebrow">HISTÓRICO DE DECISÕES</span>
           {simulation.interactions.length === 0 ? (

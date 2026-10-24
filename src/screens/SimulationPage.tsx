@@ -5,6 +5,7 @@ import { clinicalNumber } from "../format";
 import { AtlasIcon } from "../components/AtlasIcon";
 import { ErrorPanel, Loading } from "../components/Feedback";
 import { PatientScene } from "../components/PatientScene";
+import { DecisionSupportPanel } from "../components/DecisionSupportPanel";
 import { VitalMeter } from "../components/VitalMeter";
 import { useSimulation } from "../hooks/useSimulation";
 import type { Simulation } from "../types";
@@ -47,6 +48,7 @@ export function SimulationPage() {
     simulation,
     remainingSeconds,
     evolution,
+    history,
     loading,
     error,
     setError,
@@ -659,6 +661,9 @@ export function SimulationPage() {
             </div>
           )}
         </aside>
+        <div className="immersion-decision">
+          <DecisionSupportPanel history={history} timeLimitMinutes={simulation.time_limit_minutes} />
+        </div>
       </div>
     </main>
   );
